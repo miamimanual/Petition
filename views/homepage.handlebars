@@ -1,0 +1,17 @@
+<form action="/petition" method="POST">
+  <div class="first-name">
+    <label for="first">First Name</label>
+    <input type="text" name="first" required id="first" />
+  </div>
+  <div class="last-name">
+    <label for="last">Last Name</label>
+    <input type="text" name="last" required id="last" />
+  </div>
+  <div>
+    <canvas id="signature-canvas"></canvas>
+    <input type="hidden" name="signature" />
+  </div>
+  <div>
+    <button type="submit">Submit</button>
+  </div>
+</form>
