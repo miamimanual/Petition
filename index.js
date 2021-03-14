@@ -39,10 +39,10 @@ app.get("/petition", function (request, response) {
 
 app.post("/petition", function (request, response) {
     const { first, last, signature } = request.body;
-    console.log("BODY", request.body);
-    console.log("FIRST_LAST", first, last);
-    const bodyObject = JSON.parse(JSON.stringify(request.body));
-    console.log("BODYOBJECT", bodyObject);
+    //console.log("BODY", request.body);
+    //console.log("FIRST_LAST", first, last);
+    //const bodyObject = JSON.parse(JSON.stringify(request.body));
+    //console.log("BODYOBJECT", bodyObject);
 
     if (!first || !last) {
         const error = "Something went wrong, please try again";
@@ -54,11 +54,12 @@ app.post("/petition", function (request, response) {
         createSignature({
             first: `${first}`,
             last: `${last}`,
-            signature: "",
-        }) // i tried also without
+            signature: "test",
+        }) // i tried also without {}
             .then(() => {
                 // id ide u zagradu
                 //   request.session.signature_id = id or result (onda result ide gore u zagradu);
+                //
                 response.redirect("/petition/signed");
             })
             .catch((error) => {

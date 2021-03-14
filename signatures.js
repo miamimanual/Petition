@@ -7,13 +7,12 @@ const db = spicedPg(
 
 function createSignature({ first, last, signature }) {
     // before it was without {}
-    return db
-        .query(
-            "INSERT INTO signatures (first, last, signature) VALUES ($1, $2, $3) RETURNING id",
-            [first, last, signature]
-        )
+    return db.query(
+        "INSERT INTO signatures (first, last, signature) VALUES ($1, $2, $3) RETURNING id",
+        [first, last, signature]
+    );
 
-        .then((result) => result.rows[0].id);
+    //  .then((result) => result.rows[0].id);
 }
 
 function getSignatures() {
