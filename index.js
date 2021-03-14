@@ -1,12 +1,13 @@
 const express = require("express");
-const https = require("https");
 const hb = require("express-handlebars");
 const path = require("path");
-const app = express();
 const PORT = 3005;
 const { createSignature, getSignatures } = require("./signatures");
 const cookieSession = require("cookie-session");
+const { username, password, database } = require("./credentials.json");
+console.log("CREDENTIALS", username, password, database);
 
+const app = express();
 app.engine("handlebars", hb());
 app.set("view engine", "handlebars");
 
@@ -22,7 +23,7 @@ app.use(
 // body parse
 app.use(
     express.urlencoded({
-        extended: false,
+        extended: false, // i tried out with true
     })
 );
 
@@ -34,20 +35,30 @@ app.get("/petition", function (request, response) {
         title: "Petition",
         style: "style.css",
     });
-    // response.end("OK");
 });
 
 app.post("/petition", function (request, response) {
     const { first, last, signature } = request.body;
     console.log("BODY", request.body);
+    console.log("FIRST_LAST", first, last);
+    const bodyObject = JSON.parse(JSON.stringify(request.body));
+    console.log("BODYOBJECT", bodyObject);
 
     if (!first || !last) {
         const error = "Something went wrong, please try again";
+        response.render("homepage", {
+            error,
+        });
+        return; // soll hier?
     } else {
-        createSignature(request.body)
+        createSignature({
+            first: `${first}`,
+            last: `${last}`,
+            signature: "",
+        }) // i tried also without
             .then(() => {
                 // id ide u zagradu
-                //   request.session.signature_id = id;
+                //   request.session.signature_id = id or result (onda result ide gore u zagradu);
                 response.redirect("/petition/signed");
             })
             .catch((error) => {
@@ -63,12 +74,24 @@ app.get("/petition/signed", function (request, response) {
         title: "Thank you!",
         style: "style.css",
     });
-    //response.end("ja sam potpisala");
 });
 
-app.get("/petition/signers", function (request, response) {
+app.get("/petition/signatures", function (request, response) {
     console.log("List of sinners");
-    // response.end("lista potpisanih sinera");
+
+    getSignatures()
+        .then((signatures) => {
+            response.render("signaturesList", {
+                title: "Supporters",
+                style: "style.css",
+
+                signatures,
+            });
+        })
+        .catch((error) => {
+            console.log("error", error);
+            response.sendStatus(500); // 404?
+        });
 });
 
 app.listen(PORT);
