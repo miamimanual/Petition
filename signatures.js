@@ -19,4 +19,11 @@ function getSignatures() {
     return db.query("SELECT * FROM signatures").then((result) => result.rows);
 }
 
-module.exports = { createSignature, getSignatures };
+function getSingleSignature(id) {
+    return db
+        .query(`SELECT signature FROM signatures WHERE id = ${id}`)
+        .then((result) => result.rows[0].signature)
+        .catch((error) => console.log("error", error));
+}
+
+module.exports = { createSignature, getSignatures, getSingleSignature };

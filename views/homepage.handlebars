@@ -4,6 +4,10 @@
 <p class="error">{{ error }}</p>
 {{/if}}
 
+<h2>Petition!</h2>
+<p>Make the filthy rich pay for their tax(ido)es! 🕵
+</p>
+
 
 <form action="/petition" method="POST">
   <div class="first-name">
@@ -15,10 +19,12 @@
     <input type="text" name="last" required id="last" />
   </div>
   <div>
-    <canvas id="signature-canvas"></canvas>
-    <input type="hidden" name="signature" />
+    <canvas id="canvas"></canvas>
+    <input id="signature" type="hidden" name="signature" />
   </div>
   <div>
     <button type="submit">Submit</button>
   </div>
 </form>
+
+<script src="/script.js"></script> 

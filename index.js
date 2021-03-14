@@ -2,8 +2,11 @@ const express = require("express");
 const hb = require("express-handlebars");
 const path = require("path");
 const PORT = 3005;
-const { createSignature, getSignatures } = require("./signatures");
-const cookieSession = require("cookie-session");
+const {
+    createSignature,
+    getSignatures,
+    getSingleSignature,
+} = require("./signatures");
 const { username, password, database } = require("./credentials.json");
 console.log("CREDENTIALS", username, password, database);
 
@@ -11,14 +14,13 @@ const app = express();
 app.engine("handlebars", hb());
 app.set("view engine", "handlebars");
 
-/*
+const cookieSession = require("cookie-session");
 app.use(
     cookieSession({
         secret: "Anna Karenina",
         maxAge: 1000 * 60 * 60 * 24 * 14,
     })
 );
-*/
 
 // body parse
 app.use(
@@ -31,6 +33,12 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/petition", function (request, response) {
     console.log("Yello, are you there?");
+    console.log(request.session.signature_id);
+
+    if (request.session.signature_id) {
+        response.redirect("/petition/signatures");
+        return;
+    }
     response.render("homepage", {
         title: "Petition",
         style: "style.css",
@@ -54,27 +62,36 @@ app.post("/petition", function (request, response) {
         createSignature({
             first: `${first}`,
             last: `${last}`,
-            signature: "test",
+            signature: `${signature}`,
         }) // i tried also without {}
-            .then(() => {
-                // id ide u zagradu
-                //   request.session.signature_id = id or result (onda result ide gore u zagradu);
-                //
+            .then((id) => {
+                request.session.signature_id = id;
                 response.redirect("/petition/signed");
             })
             .catch((error) => {
                 console.log("error", error);
             });
-        response.redirect("/petition/signed");
+        //  response.redirect("/petition/signed");
     }
 });
 
 app.get("/petition/signed", function (request, response) {
     console.log("I signed, leave me alone");
-    response.render("signed", {
-        title: "Thank you!",
-        style: "style.css",
-    });
+    const signature_id = request.session.signature_id;
+
+    if (signature_id) {
+        const newID = signature_id.rows[0].id;
+
+        getSingleSignature(newID).then((signature) => {
+            response.render("signed", {
+                title: "Thank you!",
+                style: "style.css",
+                signature,
+            });
+        });
+    } else {
+        response.redirect("petition");
+    }
 });
 
 app.get("/petition/signatures", function (request, response) {
