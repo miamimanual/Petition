@@ -1,0 +1,28 @@
+
+{{#if error}}
+<p class="error">{{ error }}</p>
+{{/if}}
+
+<h2>Welcome back!</h2>
+<p>Plese log in</p>
+
+
+<form action="/registration" method="POST">
+
+  <div>
+    <label for="email">Your Email</label>
+    <input type="text" name="email" required id="email" />
+  </div>
+
+  <div>
+    <label for="password">Your Password</label>
+    <input type="password" name="password" required id="password" />
+  </div>
+  
+  <div>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <button type="submit">Submit</button>
+  </div>
+</form>
+
+<script src="/script.js"></script> 

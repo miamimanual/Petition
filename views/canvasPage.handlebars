@@ -1,0 +1,19 @@
+{{#if error}}
+<h2 class="error"> {{ error }} </h2>
+{{/if}}
+
+<p>Now please sign</p>
+
+<form action="/canvasPage" method="POST">
+<div>
+    <canvas id="canvas"></canvas>
+    <input id="signature" type="hidden" required name="signature" />
+</div>
+
+<div>
+<input type="hidden" name="_csrf" value="{{csrfToken}}">
+<button type="submit">Submit</button>
+</div>
+</form>
+
+<script src="/script.js"></script> 

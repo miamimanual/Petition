@@ -1,5 +1,4 @@
 
-
 {{#if error}}
 <p class="error">{{ error }}</p>
 {{/if}}
@@ -10,22 +9,35 @@
 
 
 <form action="/registration" method="POST">
+
   <div class="first-name">
     <label for="first">First Name</label>
     <input type="text" name="first" required id="first" />
   </div>
+
   <div class="last-name">
     <label for="last">Last Name</label>
     <input type="text" name="last" required id="last" />
   </div>
+
   <div>
-    <canvas id="canvas"></canvas>
-    <input id="signature" type="hidden" required name="signature" />
+    <label for="email">Email</label>
+    <input type="text" name="email" required id="email" />
   </div>
+
+    <div>
+    <label for="password">Password</label>
+    <input type="password" name="password" required id="password" />
+  </div>
+
   <div>
-       <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <button type="submit">Submit</button>
   </div>
+
 </form>
+
+<p>If you are already a member, plese <a href="/login">log in</a>.
+</p>
 
 <script src="/script.js"></script> 

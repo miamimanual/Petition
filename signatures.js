@@ -5,25 +5,42 @@ const db = spicedPg(
     `postgres:${username}:${password}@localhost:5432/${database}`
 );
 
-function createSignature({ first, last, signature }) {
-    // before it was without {}
-    return db.query(
-        "INSERT INTO signatures (first, last, signature) VALUES ($1, $2, $3) RETURNING id",
-        [first, last, signature]
-    );
-
-    //  .then((result) => result.rows[0].id);
-}
-
 function getSignatures() {
     return db.query("SELECT * FROM signatures").then((result) => result.rows);
 }
 
 function getSingleSignature(id) {
     return db
-        .query(`SELECT signature FROM signatures WHERE id = ${id}`)
-        .then((result) => result.rows[0].signature)
+        .query(`SELECT signature FROM signatures WHERE user_id = $1`) // .query("SELECT * FROM signatures WHERE id = $1", [id])
+        .then((result) => result.rows[0])
         .catch((error) => console.log("error", error));
 }
 
-module.exports = { createSignature, getSignatures, getSingleSignature };
+function getSignatureByUserId(user_id) {
+    return db
+        .query("SELECT * FROM signatures WHERE id = $1", [user_id])
+        .then((result) => result.rows[0]);
+}
+
+function createUser({ first, last, email, password_hash }) {
+    return db.query(
+        "INSERT INTO users (first, last, email, password_hash) VALUES ($1, $2, $3, $4) RETURNING id",
+        [first, last, email, password_hash]
+    );
+}
+
+function createSignature({ user_id, signature }) {
+    return db
+        .query(
+            "INSERT INTO signatures (user_id, signature) VALUES ($1, $2) RETURNING id",
+            [user_id, signature]
+        )
+        .then((result) => result.rows[0].id);
+}
+
+module.exports = {
+    createSignature,
+    getSignatures,
+    getSingleSignature,
+    createUser,
+};
