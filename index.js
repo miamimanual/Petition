@@ -1,14 +1,15 @@
 const express = require("express");
 const hb = require("express-handlebars");
 const path = require("path");
-const PORT = 3005;
+// const PORT = 3005;
 const {
     createSignature,
     getSignatures,
     getSingleSignature,
     createUser,
+    getUserByEmail,
 } = require("./signatures");
-const { username, password, database } = require("./credentials.json");
+//const { username, password, database } = require("./credentials.json");
 
 const app = express();
 app.engine("handlebars", hb());
@@ -56,7 +57,7 @@ app.get("/", (request, response) => {
     console.log("request session", request.session.user_id); //signature_id
 
     if (request.session.user_id) {
-        response.redirect("signatures");
+        response.redirect("login");
         return;
     }
     response.render("registration", {
@@ -90,7 +91,10 @@ app.post("/registration", (request, response) => {
         .then((id) => {
             // log in just registered user
             request.session.user_id = id;
-            response.render("canvasPage");
+            response.render("canvasPage", {
+                title: "Your Signature",
+                style: "style.css",
+            });
             return;
         })
         .catch((error) => {
@@ -111,6 +115,40 @@ app.post("/registration", (request, response) => {
 app.get("/login", (request, response) => {
     response.render("login", {
         title: "Login",
+    });
+});
+
+app.post("/login", (request, response) => {
+    getUserByEmail(email).then((user) => {
+        if (!user) {
+            response.render("login", {
+                title: "Login",
+                style: "style.css",
+                error: "No users are found with this email. Please try again!",
+            });
+            return;
+        }
+        compare(request.body.password, user.password_hash)
+            .then((match) => {
+                if (!match) {
+                    response.render("login", {
+                        title: "Login",
+                        style: "style.css",
+                        error:
+                            "No users are found with this email. Please try again!",
+                    });
+                    return;
+                }
+            })
+            .then((id) => {
+                // log in just registered user
+                request.session.user_id = id;
+                response.render("/", {
+                    title: "You are logged in",
+                    style: "style.css",
+                });
+                return;
+            });
     });
 });
 
@@ -147,8 +185,6 @@ app.get("/signed", (request, response) => {
     console.log(user_id);
 
     if (user_id) {
-        // const newID = user_id.rows[0].id;
-
         getSingleSignature(user_id).then((signature) => {
             response.render("signed", {
                 title: "Thank you!",
@@ -179,50 +215,4 @@ app.get("/signatures", (request, response) => {
         });
 });
 
-app.listen(PORT);
-
-//first and second part
-/*
-
-//homepage
-/*
-app.get("/petition", function (request, response) {
-    console.log("Yello, are you there?");
-    console.log(request.session.signature_id);
-
-    if (request.session.signature_id) {
-        response.redirect("/petition/signatures");
-        return;
-    }
-    response.render("homepage", {
-        title: "Petition",
-        style: "style.css",
-    });
-});
-
-
-app.post("/petition", function (request, response) {
-    const { first, last, signature } = request.body;
-
-    if (!first || !last) {
-        const error = "Something went wrong, please try again";
-        response.render("homepage", {
-            error,
-        });
-        return; // soll hier?
-    } else {
-        createSignature({
-            first: `${first}`,
-            last: `${last}`,
-            signature: `${signature}`,
-        }) // i tried also without {}
-            .then((id) => {
-                request.session.signature_id = id;
-                response.redirect("/petition/signed");
-            })
-            .catch((error) => {
-                console.log("error", error);
-            });
-    }
-});
-*/
+app.listen(process.env.PORT || 3005);

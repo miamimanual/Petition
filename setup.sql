@@ -12,7 +12,6 @@ CREATE TABLE users (
     created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- then we create a new table:
 CREATE TABLE signatures (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL UNIQUE REFERENCES users (id),

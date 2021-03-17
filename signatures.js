@@ -1,9 +1,19 @@
 const spicedPg = require("spiced-pg");
-const { username, password, database } = require("./credentials.json");
+//const { username, password } = require("./credentials.json");
 
-const db = spicedPg(
-    `postgres:${username}:${password}@localhost:5432/${database}`
-);
+const database = process.env.DB || "petition";
+
+function getDatabaseURL() {
+    if (process.env.DATABASE_URL) {
+        return process.env.DATABASE_URL;
+    }
+    const { username, password } = require("./credentials.json");
+    return `postgres:${username}:${password}@localhost:5432/${database}`;
+}
+
+const db = spicedPg(getDatabaseURL());
+
+console.log(`[db] Connecting to: ${database}`);
 
 function getSignatures() {
     return db
@@ -44,9 +54,18 @@ function createSignature({ user_id, signature }) {
         .then((result) => result.rows[0].id);
 }
 
+function getUserByEmail({ email }) {
+    return db
+        .query("SELECT users.first, users.last FROM users WHERE email = $1", [
+            email,
+        ])
+        .then((result) => result.rows[0].email);
+}
+
 module.exports = {
     createSignature,
     getSignatures,
     getSingleSignature,
     createUser,
+    getUserByEmail,
 };
