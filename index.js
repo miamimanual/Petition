@@ -53,7 +53,7 @@ app.use((request, response, next) => {
 //register/homepage
 app.get("/", (request, response) => {
     console.log("Yello, are you there?");
-    console.log(request.session.user_id); //signature_id
+    console.log("request session", request.session.user_id); //signature_id
 
     if (request.session.user_id) {
         response.redirect("signatures");
@@ -116,7 +116,8 @@ app.get("/login", (request, response) => {
 
 app.post("/canvasPage", (request, response) => {
     const { signature } = request.body;
-    const user_id = request.body.user_id;
+    const user_id = request.session.user_id;
+    console.log("userID", user_id);
 
     if (!signature) {
         const error = "Please sign here";
@@ -146,9 +147,9 @@ app.get("/signed", (request, response) => {
     console.log(user_id);
 
     if (user_id) {
-        const newID = user_id.rows[0].id;
+        // const newID = user_id.rows[0].id;
 
-        getSingleSignature(newID).then((signature) => {
+        getSingleSignature(user_id).then((signature) => {
             response.render("signed", {
                 title: "Thank you!",
                 style: "style.css",

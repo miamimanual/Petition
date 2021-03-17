@@ -6,13 +6,17 @@ const db = spicedPg(
 );
 
 function getSignatures() {
-    return db.query("SELECT * FROM signatures").then((result) => result.rows);
+    return db
+        .query(
+            "SELECT users.first, users.last FROM signatures JOIN users ON signatures.user_id = users.id;"
+        )
+        .then((result) => result.rows);
 }
 
 function getSingleSignature(id) {
     return db
-        .query(`SELECT signature FROM signatures WHERE user_id = $1`) // .query("SELECT * FROM signatures WHERE id = $1", [id])
-        .then((result) => result.rows[0])
+        .query(`SELECT signature FROM signatures WHERE user_id = $1`, [id]) // .query("SELECT * FROM signatures WHERE id = $1", [id])
+        .then((result) => result.rows[0].signature)
         .catch((error) => console.log("error", error));
 }
 
@@ -23,10 +27,12 @@ function getSignatureByUserId(user_id) {
 }
 
 function createUser({ first, last, email, password_hash }) {
-    return db.query(
-        "INSERT INTO users (first, last, email, password_hash) VALUES ($1, $2, $3, $4) RETURNING id",
-        [first, last, email, password_hash]
-    );
+    return db
+        .query(
+            "INSERT INTO users (first, last, email, password_hash) VALUES ($1, $2, $3, $4) RETURNING id",
+            [first, last, email, password_hash]
+        )
+        .then((result) => result.rows[0].id);
 }
 
 function createSignature({ user_id, signature }) {

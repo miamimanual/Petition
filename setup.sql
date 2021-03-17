@@ -19,5 +19,8 @@ CREATE TABLE signatures (
     signature TEXT NOT NULL CHECK (signature != '')
 );
 
---first VARCHAR(255) NOT NULL, 
---last VARCHAR(255) NOT NULL,
+
+SELECT users.first, users.last
+FROM signatures
+JOIN users
+ON signatures.user_id = users.id;
