@@ -8,8 +8,8 @@ const {
     getSingleSignature,
     createUser,
     getUserByEmail,
+    createUserProfile,
 } = require("./signatures");
-//const { username, password, database } = require("./credentials.json");
 
 const app = express();
 app.engine("handlebars", hb());
@@ -55,8 +55,6 @@ app.use((request, response, next) => {
 //register/homepage
 app.get("/", (request, response) => {
     console.log("Yello, are you there?");
-    console.log("request session", request.session.user_id); //signature_id
-    console.log("request session", request.session); //
 
     if (request.session.user_id) {
         response.redirect("login");
@@ -94,8 +92,9 @@ app.post("/registration", (request, response) => {
         .then((id) => {
             // log in just registered user
             request.session.user_id = id;
-            response.render("canvasPage", {
-                title: "Your Signature",
+            response.render("profile", {
+                // before: canvasPage
+                title: "Your Profile",
                 style: "style.css",
             });
             return;
@@ -167,6 +166,39 @@ app.post("/login", (request, response) => {
     }
 });
 
+app.get("/profile", (request, response) => {
+    console.log("Hey Profile!");
+    if (request.session.user_id) {
+        response.render("profile", {
+            title: "Your Profile",
+            style: "style.css",
+        });
+        return;
+    }
+    response.render("registration");
+    return;
+});
+
+app.post("/profile", (request, response) => {
+    const user_id = request.session.user_id;
+    const age = request.body.age;
+    const city = request.body.city;
+    const url = request.body.url;
+
+    createUserProfile({
+        age: `${age}`,
+        city: `${city}`,
+        url: `${url}`,
+        user_id,
+    })
+        .then(() =>
+            response.render("canvasPage", {
+                style: "style.css",
+            })
+        )
+        .catch((error) => console.log("Error", error));
+});
+
 app.post("/canvasPage", (request, response) => {
     const { signature } = request.body; // worauf sich das signature bezieht?
     const user_id = request.session.user_id;
@@ -201,8 +233,6 @@ app.get("/signed", (request, response) => {
 
     if (user_id) {
         getSingleSignature(user_id).then((signature) => {
-            console.log("SIGNATURE", signature);
-
             response.render("signed", {
                 title: "Thank you!",
                 style: "style.css",
@@ -210,7 +240,7 @@ app.get("/signed", (request, response) => {
             });
         });
     } else {
-        response.redirect("/"); // it was petition, then registrations
+        response.redirect("/");
         return;
     }
 });

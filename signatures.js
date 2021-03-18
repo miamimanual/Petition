@@ -1,5 +1,4 @@
 const spicedPg = require("spiced-pg");
-//const { username, password } = require("./credentials.json");
 
 const database = process.env.DB || "signatures";
 
@@ -13,15 +12,6 @@ function getDatabaseURL() {
 
 const db = spicedPg(getDatabaseURL());
 console.log(`[db] Connecting to: ${database}`);
-
-function createUser({ first, last, email, password_hash }) {
-    return db
-        .query(
-            "INSERT INTO users (first, last, email, password_hash) VALUES ($1, $2, $3, $4) RETURNING id",
-            [first, last, email, password_hash]
-        )
-        .then((result) => result.rows[0].id);
-}
 
 function getSignatures() {
     return db
@@ -59,10 +49,40 @@ function getUserByEmail(email) {
         .then((result) => result.rows[0]);
 }
 
+function createUser({ first, last, email, password_hash }) {
+    return db
+        .query(
+            "INSERT INTO users (first, last, email, password_hash) VALUES ($1, $2, $3, $4) RETURNING id",
+            [first, last, email, password_hash]
+        )
+        .then((result) => result.rows[0].id);
+}
+
+function createUserProfile({ user_id, age, city, url }) {
+    return db
+        .query(
+            "INSERT INTO user_profiles (user_id, age, city, url) VALUES ($1, $2, $3, $4) RETURNING id",
+            [user_id, age, city, url]
+        )
+        .then((result) => result.rows[0].id);
+}
+
+//first/old verison
+/*
+function getSignatures() {
+    return db
+        .query(
+            "SELECT users.first, users.last FROM signatures JOIN users ON signatures.user_id = users.id;"
+        )
+        .then((result) => result.rows);
+}
+*/
+
 module.exports = {
     createSignature,
     getSignatures,
     getSingleSignature,
     createUser,
     getUserByEmail,
+    createUserProfile,
 };

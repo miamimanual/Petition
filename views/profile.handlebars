@@ -1,0 +1,33 @@
+{{#if error}}
+<p class="error">{{ error }}</p>
+{{/if}}
+
+<h2>Create your Profile</h2>
+
+
+<form action="/profile" method="POST">
+
+  <div class="age">
+    <label for="age">Age</label>
+    <input type="number" name="age" id="age" />
+  </div>
+
+  <div class="city">
+    <label for="city">City</label>
+    <input type="text" name="city" id="city" />
+  </div>
+
+  <div>
+    <label for="homepage">Homepage</label>
+    <input type="url" name="homepage" id="homepage" />
+  </div>
+
+  <div>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <button type="submit">Submit</button>
+  </div>
+
+</form>
+
+
+<script src="/script.js"></script> 
