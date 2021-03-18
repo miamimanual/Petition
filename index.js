@@ -18,6 +18,7 @@ app.set("view engine", "handlebars");
 const cookieSession = require("cookie-session");
 const csurf = require("csurf");
 const { compare, hash } = require("./password");
+const { response } = require("express");
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -55,6 +56,7 @@ app.use((request, response, next) => {
 app.get("/", (request, response) => {
     console.log("Yello, are you there?");
     console.log("request session", request.session.user_id); //signature_id
+    console.log("request session", request.session); //
 
     if (request.session.user_id) {
         response.redirect("login");
@@ -70,6 +72,7 @@ app.get("/", (request, response) => {
 app.post("/registration", (request, response) => {
     const { first, last, email, password } = request.body;
     const error = "Something went wrong, please fill all the fields";
+
     if (!first || !last || !email || !password) {
         response.render("registration", {
             title: "Registration",
@@ -79,7 +82,7 @@ app.post("/registration", (request, response) => {
         return;
     }
 
-    hash(request.body.password)
+    hash(request.body.password) //password
         .then((password_hash) => {
             return createUser({
                 first: `${first}`,
@@ -98,11 +101,12 @@ app.post("/registration", (request, response) => {
             return;
         })
         .catch((error) => {
+            console.log(error);
             if (error) {
                 response.render("registration", {
                     title: "Registration",
                     style: "style.css",
-                    error: "This Email is already registered!",
+                    error: "ERROR, relation users does not exist",
                 });
                 return;
             }
@@ -115,22 +119,23 @@ app.post("/registration", (request, response) => {
 app.get("/login", (request, response) => {
     response.render("login", {
         title: "Login",
+        style: "style.css",
     });
 });
 
 app.post("/login", (request, response) => {
-    getUserByEmail(email).then((user) => {
-        if (!user) {
-            response.render("login", {
-                title: "Login",
-                style: "style.css",
-                error: "No users are found with this email. Please try again!",
-            });
-            return;
-        }
-        compare(request.body.password, user.password_hash)
-            .then((match) => {
-                if (!match) {
+    const email = request.body.email;
+    const password = request.body.password;
+
+    if (!email || !password) {
+        response.render("login", {
+            error: "Something went wrond, try again, please!",
+        });
+        return;
+    } else {
+        getUserByEmail(email)
+            .then((user) => {
+                if (!user) {
                     response.render("login", {
                         title: "Login",
                         style: "style.css",
@@ -139,21 +144,31 @@ app.post("/login", (request, response) => {
                     });
                     return;
                 }
-            })
-            .then((id) => {
-                // log in just registered user
-                request.session.user_id = id;
-                response.render("/", {
-                    title: "You are logged in",
-                    style: "style.css",
+                compare(password, user.password_hash).then((match) => {
+                    if (!match) {
+                        response.render("login", {
+                            title: "Login",
+                            style: "style.css",
+                            error:
+                                " 2: No users are found with this email. Please try again!",
+                        });
+                        return;
+                    }
+                    request.session.user_id = user.id;
+                    response.redirect("signed");
+                    return;
                 });
-                return;
+            })
+            .catch((error) => {
+                response.render("login", {
+                    error: "Something went wrong",
+                });
             });
-    });
+    }
 });
 
 app.post("/canvasPage", (request, response) => {
-    const { signature } = request.body;
+    const { signature } = request.body; // worauf sich das signature bezieht?
     const user_id = request.session.user_id;
     console.log("userID", user_id);
 
@@ -182,10 +197,12 @@ app.post("/canvasPage", (request, response) => {
 app.get("/signed", (request, response) => {
     console.log("I signed, leave me alone");
     const user_id = request.session.user_id;
-    console.log(user_id);
+    console.log("USERID", user_id);
 
     if (user_id) {
         getSingleSignature(user_id).then((signature) => {
+            console.log("SIGNATURE", signature);
+
             response.render("signed", {
                 title: "Thank you!",
                 style: "style.css",

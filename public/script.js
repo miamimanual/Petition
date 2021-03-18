@@ -40,6 +40,7 @@ function draw(event) {
 }
 
 function updateInput() {
+    // takes from canvas as numbers and with toDataUrl converts it into pretvoriti
     const url = canvas.toDataURL();
     input.value = url;
 }

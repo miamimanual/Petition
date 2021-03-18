@@ -19,7 +19,7 @@ CREATE TABLE signatures (
 );
 
 
-SELECT users.first, users.last
-FROM signatures
-JOIN users
-ON signatures.user_id = users.id;
+--SELECT users.first, users.last
+--FROM signatures
+--JOIN users
+--ON signatures.user_id = users.id;

@@ -1,7 +1,7 @@
 const spicedPg = require("spiced-pg");
 //const { username, password } = require("./credentials.json");
 
-const database = process.env.DB || "petition";
+const database = process.env.DB || "signatures";
 
 function getDatabaseURL() {
     if (process.env.DATABASE_URL) {
@@ -12,8 +12,16 @@ function getDatabaseURL() {
 }
 
 const db = spicedPg(getDatabaseURL());
-
 console.log(`[db] Connecting to: ${database}`);
+
+function createUser({ first, last, email, password_hash }) {
+    return db
+        .query(
+            "INSERT INTO users (first, last, email, password_hash) VALUES ($1, $2, $3, $4) RETURNING id",
+            [first, last, email, password_hash]
+        )
+        .then((result) => result.rows[0].id);
+}
 
 function getSignatures() {
     return db
@@ -36,15 +44,6 @@ function getSignatureByUserId(user_id) {
         .then((result) => result.rows[0]);
 }
 
-function createUser({ first, last, email, password_hash }) {
-    return db
-        .query(
-            "INSERT INTO users (first, last, email, password_hash) VALUES ($1, $2, $3, $4) RETURNING id",
-            [first, last, email, password_hash]
-        )
-        .then((result) => result.rows[0].id);
-}
-
 function createSignature({ user_id, signature }) {
     return db
         .query(
@@ -54,12 +53,10 @@ function createSignature({ user_id, signature }) {
         .then((result) => result.rows[0].id);
 }
 
-function getUserByEmail({ email }) {
+function getUserByEmail(email) {
     return db
-        .query("SELECT users.first, users.last FROM users WHERE email = $1", [
-            email,
-        ])
-        .then((result) => result.rows[0].email);
+        .query("SELECT * FROM users WHERE email = $1", [email])
+        .then((result) => result.rows[0]);
 }
 
 module.exports = {
