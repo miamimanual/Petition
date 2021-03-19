@@ -13,20 +13,10 @@ function getDatabaseURL() {
 const db = spicedPg(getDatabaseURL());
 console.log(`[db] Connecting to: ${database}`);
 
-/*
 function getSignatures() {
     return db
         .query(
-            "SELECT users.first, users.last FROM signatures JOIN users ON signatures.user_id = users.id;"
-        )
-        .then((result) => result.rows);
-}
-*/
-
-function getSignatures() {
-    return db
-        .query(
-            "SELECT users.first, users.last, user_profiles.age, user_profiles.city, user_profiles.url FROM users JOIN signatures ON signatures.user_id = users.id JOIN user_profiles ON user_profiles.user_id = users.id WHERE signature IS NOT NULL;"
+            "SELECT users.first, users.last, user_profiles.age, user_profiles.city, user_profiles.url FROM users JOIN signatures ON signatures.user_id = users.id JOIN user_profiles ON user_profiles.user_id = users.id WHERE signature IS NOT NULL AND user_profiles.age IS NULL;"
         )
         .then((result) => result.rows);
 }
