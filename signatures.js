@@ -43,6 +43,12 @@ function getSignatureByUserId(user_id) {
         .then((result) => result.rows[0]);
 }
 
+function getUserInfoById(user_id) {
+    return db
+        .query("SELECT * FROM users WHERE id =$1", [user_id])
+        .then((result) => result.rows[0]);
+}
+
 function createSignature({ user_id, signature }) {
     return db
         .query(
@@ -76,6 +82,40 @@ function createUserProfile({ user_id, age, city, url }) {
         .then((result) => result.rows[0].id);
 }
 
+function updateUser({ first, last, email, password_hash, user_id }) {
+    if (password_hash) {
+        return db
+            .query(
+                "UPDATE users SET first = $1, last = $2, email = $3, password_hash = $4 WHERE id = $5"[
+                    (first, last, email, password_hash, user_id)
+                ]
+            )
+            .then((result) => result.rows[0].id);
+    }
+    return db
+        .query(
+            "UPDATE users SET first = $1, last = $2, email = $3 WHERE id = $4",
+            [first, last, email, user_id]
+        )
+        .then((result) => result.rows[0].id);
+}
+
+function upsertUserProfile({ user_id, age, city, url }) {
+    return db
+        .query(
+            "INSERT INTO user_profiles (user_id, age, city, url) VALUES ($1, $2, $3, $4) ON CONFLICT (user_id) DO UPDATE SET age = $2, city = $3, url = $4 RETURNING id",
+            [user_id, age, city, url]
+        )
+        .then((result) => result.rows[0].id);
+}
+
+function deleteSignature(user_id) {
+    return db.query("DELETE signature FROM signatures WHERE user_id =$1", [
+        user_id,
+    ]);
+    // DELETE FROM signatures WHERE userd_id = $1, [user_id]
+}
+
 //first/old verison
 /*
 function getSignatures() {
@@ -95,4 +135,7 @@ module.exports = {
     getUserByEmail,
     createUserProfile,
     getSignaturesByCity,
+    updateUser,
+    upsertUserProfile,
+    getUserInfoById,
 };

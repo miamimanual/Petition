@@ -10,6 +10,9 @@ const {
     getUserByEmail,
     createUserProfile,
     getSignaturesByCity,
+    updateUser,
+    upsertUserProfile,
+    getUserInfoById,
 } = require("./signatures");
 
 const app = express();
@@ -19,7 +22,7 @@ app.set("view engine", "handlebars");
 const cookieSession = require("cookie-session");
 const csurf = require("csurf");
 const { compare, hash } = require("./password");
-const { response } = require("express");
+const { response, request } = require("express");
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -265,12 +268,31 @@ app.get("/signatures", (request, response) => {
 });
 
 app.get("/signatures/:city", (request, response) => {
+    console.log("sorted by cities");
     const { city } = request.params; // request.body.city?
 
     getSignaturesByCity(city)
         .then((result) => {
             response.render("signaturesByCity", {
                 title: `${city}`,
+                style: "style.css",
+                result,
+            });
+            return;
+        })
+        .catch((error) => {
+            console.log("error", error);
+        });
+});
+
+app.get("/profile/edit", (request, response) => {
+    console.log("update your profile");
+    const user_id = request.session.user_id;
+
+    getUserInfoById(user_id)
+        .then((result) => {
+            response.render("editProfile", {
+                title: "Update Your Profile",
                 style: "style.css",
                 result,
             });
