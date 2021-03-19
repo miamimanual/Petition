@@ -40,7 +40,7 @@ function draw(event) {
 }
 
 function updateInput() {
-    // takes from canvas as numbers and with toDataUrl converts it into pretvoriti
+    // takes from canvas as numbers and with toDataUrl converts it into lesbare data
     const url = canvas.toDataURL();
     input.value = url;
 }

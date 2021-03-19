@@ -189,7 +189,7 @@ app.post("/profile", (request, response) => {
         age: `${age}`,
         city: `${city}`,
         url: `${url}`,
-        user_id,
+        user_id: `${user_id}`,
     })
         .then(() =>
             response.render("canvasPage", {
@@ -255,6 +255,7 @@ app.get("/signatures", (request, response) => {
                 style: "style.css",
                 signatures,
             });
+            return;
         })
         .catch((error) => {
             console.log("error", error);
