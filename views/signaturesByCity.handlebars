@@ -1,0 +1,13 @@
+
+<h3>People from {{ city }} who supported us:</h3>
+
+<ul class="listOfSignatures"> 
+{{#result}}
+    <li>{{ first }} {{ last }} {{ age }}
+        {{#if url}}
+        <a href="#">https://{{url}}</a>
+        {{/if}}
+    </li>
+{{/result}}
+</ul>
+    <a href="/signatures">Back to all signers</a>

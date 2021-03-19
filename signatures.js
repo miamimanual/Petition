@@ -16,7 +16,16 @@ console.log(`[db] Connecting to: ${database}`);
 function getSignatures() {
     return db
         .query(
-            "SELECT users.first, users.last, user_profiles.age, user_profiles.city, user_profiles.url FROM users JOIN signatures ON signatures.user_id = users.id JOIN user_profiles ON user_profiles.user_id = users.id WHERE signature IS NOT NULL AND user_profiles.age IS NULL;"
+            "SELECT users.first, users.last, user_profiles.age, user_profiles.city, user_profiles.url FROM users JOIN signatures ON signatures.user_id = users.id JOIN user_profiles ON user_profiles.user_id = users.id WHERE signature IS NOT NULL;" //AND user_profiles.age IS NULL
+        )
+        .then((result) => result.rows);
+}
+
+function getSignaturesByCity(city) {
+    return db
+        .query(
+            "SELECT users.first, users.last, user_profiles.age, user_profiles.city, user_profiles.url FROM users JOIN signatures ON signatures.user_id = users.id JOIN user_profiles ON user_profiles.user_id = users.id WHERE signature IS NOT NULL AND city = $1;",
+            [city]
         )
         .then((result) => result.rows);
 }
@@ -62,7 +71,7 @@ function createUserProfile({ user_id, age, city, url }) {
     return db
         .query(
             "INSERT INTO user_profiles (user_id, age, city, url) VALUES ($1, $2, $3, $4) RETURNING id",
-            [user_id, age, city, url]
+            [user_id, age ? age : null, city, url]
         )
         .then((result) => result.rows[0].id);
 }
@@ -85,4 +94,5 @@ module.exports = {
     createUser,
     getUserByEmail,
     createUserProfile,
+    getSignaturesByCity,
 };

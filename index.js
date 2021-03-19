@@ -9,6 +9,7 @@ const {
     createUser,
     getUserByEmail,
     createUserProfile,
+    getSignaturesByCity,
 } = require("./signatures");
 
 const app = express();
@@ -260,6 +261,23 @@ app.get("/signatures", (request, response) => {
         .catch((error) => {
             console.log("error", error);
             response.sendStatus(500); // 404?
+        });
+});
+
+app.get("/signatures/:city", (request, response) => {
+    const { city } = request.params; // request.body.city?
+
+    getSignaturesByCity(city)
+        .then((result) => {
+            response.render("signaturesByCity", {
+                title: `${city}`,
+                style: "style.css",
+                result,
+            });
+            return;
+        })
+        .catch((error) => {
+            console.log("error", error);
         });
 });
 
