@@ -303,4 +303,35 @@ app.get("/profile/edit", (request, response) => {
         });
 });
 
+app.post("/profile/edit", (request, response) => {
+    const user_id = request.session.user_id;
+    const { first, last, email, password_hash, age, city, url } = request.body;
+    console.log("AFTER", first, last, email, password_hash, user_id);
+    console.log("AFTER userProfile", user_id, age, city, url);
+
+    Promise.all([
+        updateUser({
+            first: `${first}`,
+            last: `${last}`,
+            email: `${email}`,
+            password_hash: `${password_hash}`,
+            user_id,
+        }),
+        upsertUserProfile({
+            user_id,
+            age: `${age}`,
+            city: `${city}`,
+            url: `${user_id}`,
+        }),
+    ])
+        .then(() => {
+            console.log("unutar then");
+            response.render("signaturesList", {
+                title: "Edit Your Profile",
+                style: "style.css",
+            });
+        })
+        .catch((error) => console.log("Error", error));
+});
+
 app.listen(process.env.PORT || 3005);

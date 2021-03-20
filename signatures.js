@@ -79,34 +79,36 @@ function createUserProfile({ user_id, age, city, url }) {
             "INSERT INTO user_profiles (user_id, age, city, url) VALUES ($1, $2, $3, $4) RETURNING id",
             [user_id, age ? age : null, city, url]
         )
-        .then((result) => result.rows[0].id);
+        .then((result) => result.rows[0]);
 }
 
 function updateUser({ first, last, email, password_hash, user_id }) {
     if (password_hash) {
         return db
             .query(
-                "UPDATE users SET first = $1, last = $2, email = $3, password_hash = $4 WHERE id = $5"[
-                    (first, last, email, password_hash, user_id)
-                ]
+                "UPDATE users SET first = $1, last = $2, email = $3, password_hash = $4 WHERE id = $5",
+                [first, last, email, password_hash, user_id]
             )
-            .then((result) => result.rows[0].id);
+            .then((result) => {
+                console.log(result);
+                result.rows[0];
+            });
     }
     return db
         .query(
             "UPDATE users SET first = $1, last = $2, email = $3 WHERE id = $4",
             [first, last, email, user_id]
         )
-        .then((result) => result.rows[0].id);
+        .then((result) => result.rows[0]);
 }
 
 function upsertUserProfile({ user_id, age, city, url }) {
     return db
         .query(
             "INSERT INTO user_profiles (user_id, age, city, url) VALUES ($1, $2, $3, $4) ON CONFLICT (user_id) DO UPDATE SET age = $2, city = $3, url = $4 RETURNING id",
-            [user_id, age, city, url]
+            [user_id, age ? age : null, city, url]
         )
-        .then((result) => result.rows[0].id);
+        .then((result) => result.rows[0]);
 }
 
 function deleteSignature(user_id) {
@@ -115,17 +117,6 @@ function deleteSignature(user_id) {
     ]);
     // DELETE FROM signatures WHERE userd_id = $1, [user_id]
 }
-
-//first/old verison
-/*
-function getSignatures() {
-    return db
-        .query(
-            "SELECT users.first, users.last FROM signatures JOIN users ON signatures.user_id = users.id;"
-        )
-        .then((result) => result.rows);
-}
-*/
 
 module.exports = {
     createSignature,
