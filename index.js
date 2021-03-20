@@ -231,6 +231,8 @@ app.post("/canvasPage", (request, response) => {
     }
 });
 
+// SIGNED aka THANK YOU PAGE
+
 app.get("/signed", (request, response) => {
     console.log("I signed, leave me alone");
     const user_id = request.session.user_id;
@@ -288,6 +290,7 @@ app.get("/signatures/:city", (request, response) => {
                 title: `${city}`,
                 style: "style.css",
                 result,
+                city,
             });
             return;
         })
@@ -341,13 +344,11 @@ app.post("/profile/edit", (request, response) => {
         .then(() => getUserInfoById(user_id))
         .then((result) => {
             console.log("unutar then");
-            console.log(result);
-            response.render("signaturesList", {
-                title: "Edit Your Profile",
-                style: "style.css",
-                message: "Profile updated!",
-                result,
-            });
+            console.log("from getUserInfo", result);
+            response.render("signed" {
+            style: "style.css",
+            result,
+            }); 
         })
         .catch((error) => console.log("Error", error));
 });
