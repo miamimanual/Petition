@@ -7,46 +7,50 @@
 
 <form action="/profile/edit" method="POST">
 
+{{#result}}
 
   <div class="first-name">
     <label for="first">First Name</label>
-    <input type="text" name="first" id="first" />
+    <input type="text" name="first" required id="first" value="{{first}}"/>
   </div>
 
   <div class="last-name">
     <label for="last">Last Name</label>
-    <input type="text" name="last" id="last" />
+    <input type="text" name="last" required id="last" value="{{last}}"/>
   </div>
 
   <div>
     <label for="email">Email</label>
-    <input type="email" name="email" id="email" />
+    <input type="email" name="email" required id="email" value="{{email}}"/>
   </div>
 
     <div>
     <label for="password">Password</label>
-    <input type="password" name="password" id="password" />
+    <input type="password" name="password" required id="password" value="{{password}}"/>
   </div>
 
   <div class="age">
     <label for="age">Age</label>
-    <input type="number" name="age" id="age" />
+    <input type="number" name="age" id="age" value="{{age}}"/>
   </div>
 
   <div class="city">
     <label for="city">City</label>
-    <input type="text" name="city" id="city" />
+    <input type="text" name="city" id="city" value="{{city}}"/>
   </div>
 
   <div>
     <label for="url">Homepage</label>
-    <input type="text" name="url" id="url" />
+    <input type="text" name="url" id="url" value="{{url}}"/>
   </div>
+
+{{/result}}
 
   <div>
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <button type="submit">Submit</button>
   </div>
+
 
 </form>
 

@@ -13,6 +13,7 @@ const {
     updateUser,
     upsertUserProfile,
     getUserInfoById,
+    deleteSignature,
 } = require("./signatures");
 
 const app = express();
@@ -249,6 +250,16 @@ app.get("/signed", (request, response) => {
     }
 });
 
+app.post("/signed", (request, response) => {
+    const user_id = request.session.user_id;
+
+    deleteSignature(user_id).then(() => {
+        response.render("canvasPage", {
+            style: "style.css",
+        });
+    });
+});
+
 app.get("/signatures", (request, response) => {
     console.log("List of sinners");
 
@@ -309,26 +320,33 @@ app.post("/profile/edit", (request, response) => {
     console.log("AFTER", first, last, email, password_hash, user_id);
     console.log("AFTER userProfile", user_id, age, city, url);
 
-    Promise.all([
-        updateUser({
-            first: `${first}`,
-            last: `${last}`,
-            email: `${email}`,
-            password_hash: `${password_hash}`,
-            user_id,
-        }),
-        upsertUserProfile({
-            user_id,
-            age: `${age}`,
-            city: `${city}`,
-            url: `${user_id}`,
-        }),
-    ])
-        .then(() => {
+    hash(request.body.password)
+        .then((password_hash) =>
+            Promise.all([
+                updateUser({
+                    first,
+                    last,
+                    email,
+                    password_hash,
+                    user_id,
+                }),
+                upsertUserProfile({
+                    user_id,
+                    age,
+                    city,
+                    url,
+                }),
+            ])
+        )
+        .then(() => getUserInfoById(user_id))
+        .then((result) => {
             console.log("unutar then");
+            console.log(result);
             response.render("signaturesList", {
                 title: "Edit Your Profile",
                 style: "style.css",
+                message: "Profile updated!",
+                result,
             });
         })
         .catch((error) => console.log("Error", error));

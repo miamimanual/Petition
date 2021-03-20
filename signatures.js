@@ -45,7 +45,10 @@ function getSignatureByUserId(user_id) {
 
 function getUserInfoById(user_id) {
     return db
-        .query("SELECT * FROM users WHERE id =$1", [user_id])
+        .query(
+            "SELECT first, last, email, password_hash, age, city, url FROM users FULL JOIN user_profiles ON user_profiles.user_id = users.id WHERE users.id = $1",
+            [user_id]
+        )
         .then((result) => result.rows[0]);
 }
 
@@ -108,14 +111,11 @@ function upsertUserProfile({ user_id, age, city, url }) {
             "INSERT INTO user_profiles (user_id, age, city, url) VALUES ($1, $2, $3, $4) ON CONFLICT (user_id) DO UPDATE SET age = $2, city = $3, url = $4 RETURNING id",
             [user_id, age ? age : null, city, url]
         )
-        .then((result) => result.rows[0]);
+        .then((result) => result.rows[0].id);
 }
 
 function deleteSignature(user_id) {
-    return db.query("DELETE signature FROM signatures WHERE user_id =$1", [
-        user_id,
-    ]);
-    // DELETE FROM signatures WHERE userd_id = $1, [user_id]
+    return db.query("DELETE FROM signatures WHERE user_id = $1", [user_id]);
 }
 
 module.exports = {
@@ -129,4 +129,5 @@ module.exports = {
     updateUser,
     upsertUserProfile,
     getUserInfoById,
+    deleteSignature,
 };
