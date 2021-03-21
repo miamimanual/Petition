@@ -24,6 +24,7 @@ const cookieSession = require("cookie-session");
 const csurf = require("csurf");
 const { compare, hash } = require("./password");
 const { response, request } = require("express");
+const password = require("./password");
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -320,8 +321,38 @@ app.get("/profile/edit", (request, response) => {
 app.post("/profile/edit", (request, response) => {
     const user_id = request.session.user_id;
     const { first, last, email, password_hash, age, city, url } = request.body;
+    const password = request.body.password;
     console.log("AFTER", first, last, email, password_hash, user_id);
     console.log("AFTER userProfile", user_id, age, city, url);
+
+    if (password) {
+        hash(password).then((password_hash) =>
+            updateUser({ first, last, email, password_hash, user_id })
+        );
+    }
+    Promise.all([
+        updateUser({ first, last, email, user_id }),
+        upsertUserProfile({
+            user_id,
+            age,
+            city,
+            url,
+        }),
+    ])
+        .then(() => getUserInfoById(user_id))
+        .then((result) => {
+            console.log("unutar then");
+            console.log("from getUserInfo", result);
+            response.render("editProfile", {
+                style: "style.css",
+                message: "You updated your Profile successfully!",
+                result,
+            });
+        })
+        .catch((error) => console.log("Error", error));
+});
+
+/*
 
     hash(request.body.password)
         .then((password_hash) =>
@@ -345,12 +376,14 @@ app.post("/profile/edit", (request, response) => {
         .then((result) => {
             console.log("unutar then");
             console.log("from getUserInfo", result);
-            response.render("signed" {
-            style: "style.css",
-            result,
-            }); 
+            response.render("signed", {
+                style: "style.css",
+                result,
+            });
         })
         .catch((error) => console.log("Error", error));
 });
+
+*/
 
 app.listen(process.env.PORT || 3005);
