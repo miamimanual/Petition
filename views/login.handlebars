@@ -9,19 +9,19 @@
 
 <form action="/login" method="POST">
 
-  <div>
+  <div class="email">
     <label for="email">Your Email</label>
     <input type="email" name="email" required id="email" />
   </div>
 
-  <div>
+  <div class="email">
     <label for="password">Your Password</label>
     <input type="password" name="password" required id="password" />
   </div>
   
   <div>
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    <button type="submit">Submit</button>
+    <button id="button" type="submit">Submit</button>
   </div>
 </form>
 

@@ -2,7 +2,7 @@
 <h2 class="error"> {{ error }} </h2>
 {{/if}}
 
-<p>Now please sign</p>
+<p>Please sign</p>
 
 <form action="/canvasPage" method="POST">
 <div>
@@ -12,7 +12,7 @@
 
 <div>
 <input type="hidden" name="_csrf" value="{{csrfToken}}">
-<button type="submit">Submit</button>
+<button id="button" type="submit">Submit</button>
 </div>
 </form>
 

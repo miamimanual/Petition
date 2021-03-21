@@ -5,7 +5,7 @@
 <img src="{{ signature }}" alt="your signature">
 <form action="/signed" method="post">
 <input type="hidden" name="_csrf" value="{{csrfToken}}">
-<button type="submit">Delete your signature</button>
+<button id="button" type="submit">Delete your signature</button>
 </form>
 {{/if}}
 

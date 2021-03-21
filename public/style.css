@@ -4,26 +4,38 @@
 
 body {
     margin: 8px;
-    height: 100hv;
-    background-color: thistle;
+    height: 100vh;
+    background-color: #94b5c0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    font-family: "Poppins", Helvetica, Arial, sans-serif;
 }
 
-.first-name {
-    display: inline-block;
+.main-div {
+    width: 35rem;
+    text-align: left;
 }
 
-.last-name {
-    display: inline-block;
+h1,
+h2,
+h3,
+h4,
+p {
+    color: #ece2e1;
 }
 
-#canvas {
-    width: 600px;
-    height: 100px;
-    border: 1px dotted;
+.first-name,
+.last-name,
+.email,
+.password,
+.age,
+.city,
+.url {
+    display: block;
+    border: none;
+    color: #ece2e1;
 }
 
 /* ALL SIGNATURES */
@@ -31,4 +43,43 @@ body {
 .listOfSignatures {
     list-style-type: none;
     text-align: center;
+}
+
+#canvas {
+    width: 600px;
+    height: 120px;
+    border-bottom: 1px dotted;
+}
+
+#first,
+#last,
+#email,
+#password,
+#age,
+#city,
+#url {
+    border: none;
+    display: block;
+    border-radius: 3px;
+    background-color: #350b40;
+    color: #ece2e1;
+}
+
+#button {
+    -webkit-border-radius: 20;
+    -moz-border-radius: 20;
+    border-radius: 20px;
+    font-family: Arial;
+    color: #ece2e1;
+    font-size: 14px;
+    background: #94b5c0;
+    padding: 2px 10px 2px 10px;
+    border: solid #350b40 2px;
+    text-decoration: none;
+    margin-top: 10px;
+}
+
+#button:hover {
+    background: #350b40;
+    text-decoration: none;
 }

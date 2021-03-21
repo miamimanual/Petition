@@ -3,9 +3,10 @@
 <p class="error">{{ error }}</p>
 {{/if}}
 
-<h2>Petition!</h2>
-<p>Make the filthy rich pay for their tax(ido)es! 🕵
-</p>
+<h2>Working more hours 🕰️ does not mean working better.</h2>
+<p> 
+Let´s try to be more efficient and have more free time for our families, friends, own projects, community activities and hobbies 🏌️‍♀️ 🏄‍♂️ 🚵‍♀️ 🤸 
+Let´s introduce the four-day workweek. Who is in? </p>
 
 
 <form action="/registration" method="POST">
@@ -20,19 +21,19 @@
     <input type="text" name="last" required id="last" />
   </div>
 
-  <div>
+  <div class="email">
     <label for="email">Email</label>
     <input type="email" name="email" required id="email" />
   </div>
 
-    <div>
+    <div class="password">
     <label for="password">Password</label>
     <input type="password" name="password" required id="password" />
   </div>
 
   <div>
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    <button type="submit">Submit</button>
+    <button id="button" type="submit">Submit</button>
   </div>
 
 </form>

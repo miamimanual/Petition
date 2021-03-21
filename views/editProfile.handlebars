@@ -2,7 +2,11 @@
 <p class="error">{{ error }}</p>
 {{/if}}
 
+{{#if message}}
+<p class="message">{{ message }}</p>
+{{else}}
 <h2>Update your Profile</h2>
+{{/if}}
 
 
 <form action="/profile/edit" method="POST">
@@ -19,12 +23,12 @@
     <input type="text" name="last" required id="last" value="{{last}}"/>
   </div>
 
-  <div>
+  <div class="email">
     <label for="email">Email</label>
     <input type="email" name="email" required id="email" value="{{email}}"/>
   </div>
 
-    <div>
+    <div class="password">
     <label for="password">Password</label>
     <input type="password" name="password" id="password"/>
   </div>
@@ -39,7 +43,7 @@
     <input type="text" name="city" id="city" value="{{city}}"/>
   </div>
 
-  <div>
+  <div class="url">
     <label for="url">Homepage</label>
     <input type="text" name="url" id="url" value="{{url}}"/>
   </div>
@@ -48,12 +52,16 @@
 
   <div>
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    <button type="submit">Update</button>
+    <button id="button" type="submit">Update</button>
   </div>
 
 </form>
 
+
 <h3> <a href="/signatures">List</a> of all the good people, who signed the petition</h3>
+<h3> Go Back to <a href="/signed">your signature</a></h3>
+
+
 
 
 <script src="/script.js"></script> 

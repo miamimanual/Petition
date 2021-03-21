@@ -300,6 +300,8 @@ app.get("/signatures/:city", (request, response) => {
         });
 });
 
+// EDIT PROFILE
+
 app.get("/profile/edit", (request, response) => {
     console.log("update your profile");
     const user_id = request.session.user_id;
@@ -344,6 +346,7 @@ app.post("/profile/edit", (request, response) => {
             console.log("unutar then");
             console.log("from getUserInfo", result);
             response.render("editProfile", {
+                title: "Update Your Profile",
                 style: "style.css",
                 message: "You updated your Profile successfully!",
                 result,
@@ -351,39 +354,5 @@ app.post("/profile/edit", (request, response) => {
         })
         .catch((error) => console.log("Error", error));
 });
-
-/*
-
-    hash(request.body.password)
-        .then((password_hash) =>
-            Promise.all([
-                updateUser({
-                    first,
-                    last,
-                    email,
-                    password_hash,
-                    user_id,
-                }),
-                upsertUserProfile({
-                    user_id,
-                    age,
-                    city,
-                    url,
-                }),
-            ])
-        )
-        .then(() => getUserInfoById(user_id))
-        .then((result) => {
-            console.log("unutar then");
-            console.log("from getUserInfo", result);
-            response.render("signed", {
-                style: "style.css",
-                result,
-            });
-        })
-        .catch((error) => console.log("Error", error));
-});
-
-*/
 
 app.listen(process.env.PORT || 3005);
