@@ -3,7 +3,7 @@
 }
 
 body {
-    margin: 8px;
+    margin: 0px;
     height: 100vh;
     background-color: #94b5c0;
     display: flex;
@@ -12,6 +12,16 @@ body {
     align-items: center;
     font-family: "Poppins", Helvetica, Arial, sans-serif;
 }
+
+/*
+footer {
+    padding: 0.1%;
+    width: 100%;
+    text-align: left;
+    background-color: #350b40;
+    color: #ece2e1;
+}
+*/
 
 .main-div {
     width: 35rem;
@@ -38,17 +48,23 @@ p {
     color: #ece2e1;
 }
 
+.list {
+    color: #fff9b0;
+}
+
 /* ALL SIGNATURES */
 
 .listOfSignatures {
     list-style-type: none;
     text-align: center;
+    font-size: 14px;
 }
 
 #canvas {
     width: 600px;
     height: 120px;
     border-bottom: 1px dotted;
+    color: #ece2e1;
 }
 
 #first,

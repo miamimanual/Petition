@@ -42,9 +42,9 @@ app.use(
     })
 );
 
+//csrf
 app.use(csurf());
 
-//csrf
 app.use((request, response, next) => {
     response.locals.csrfToken = request.csrfToken();
     next();

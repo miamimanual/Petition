@@ -3,9 +3,18 @@
 <ul class="listOfSignatures"> 
 
 {{#signatures}}
-    <li>{{ first }} {{ last }} {{ age }} <a href="/signatures/{{city}}">{{ city }}</a>
+    <li class="list">
+        {{ first }} {{ last }} 
+        
+        {{#if age}}
+        | age: {{ age }}
+        {{/if}}
+
+        {{#if city}}
+        | city: <a href="/signatures/{{city}}">{{ city }}</a>
+        {{/if}}
     {{#if url}}
-        <a href="#">{{url}}</a>
+        | homepage: <a href="#">{{url}}</a>
     {{/if}}
     </li>
 {{/signatures}}
